@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This is a Phing build file. More info at http://www.phing.info -->
+<project name="{{ project.name }}">
+
+</project>

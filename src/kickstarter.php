@@ -64,7 +64,17 @@ class CreateProjectCommand implements Command {
             $project->setName(array_shift($args));
             
             $target = empty($args) ? '.' : array_shift($args);
-            if (!is_dir($target)) {
+            if (is_dir($target)) {
+                echo "Warning: target directory $target already exists.\n";
+                echo "Override ? (y/n) ";
+                $fd = fopen('php://stdin', 'r');
+                $response = trim(fgets($fd));
+                if ($response != 'y') {
+                    echo "Exiting.\n";
+                    return;
+                }
+            }
+            else {
                 mkdir($target, 0755, true);
             }
             

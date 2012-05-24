@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This is a Phing build file. More info at http://www.phing.info -->
-<project name="{{ project.name }}">
-
+<project name="{{ project.name }}" default="phpunit">
+    <target name="phpunit">
+        <exec executable="phpunit">
+            <arg line="--bootstrap tests/bootstrap.php tests"/>
+        </exec>
+    </target>
 </project>

@@ -3,7 +3,14 @@
 
 /*
  * Copyright 2012 Antoine d'Otreppe de Bouvette
- * Available under the terms of the MIT License
+ * Available under the terms of the MIT License.
+ * 
+ * The contents of the prototype/ subdirectory are in the public domain.
+ * Want to get in touch ?
+ * - a.dotreppe@aspyct.org
+ * - @aspyct on twitter
+ * 
+ * Run this script in a shell to get some help
  */
 
 try {
@@ -66,6 +73,8 @@ class CreateProjectCommand implements Command {
             $twigLoader = new Twig_Loader_Filesystem(PROTOTYPE_DIR);
             $twig = new Twig_Environment($twigLoader);
             
+            
+            // Copy files and create directories
             foreach ($this->recursiveList(PROTOTYPE_DIR) as $file) {
                 $source = PROTOTYPE_DIR.DIRECTORY_SEPARATOR.$file;
                 $dest = $target.DIRECTORY_SEPARATOR.$file;
@@ -86,7 +95,28 @@ class CreateProjectCommand implements Command {
                     mkdir($dest, 0755, true);
                 }
             }
+            
+            // Run composer for the first time
+            $origin = getcwd();
+            chdir($target);
+            
+            $this->runScript("curl http://getcomposer.org/installer | php");
+            
+            if (!is_file('composer.phar')) {
+                echo "Could not download composer.\n";
+                return;
+            }
+            
+            $this->runScript("chmod +x composer.phar");
+            $this->runScript("./composer.phar install");
+            
+            chdir($origin);
         }
+    }
+    
+    private function runScript($command) {
+        echo $command."\n";
+        system($command);
     }
     
     private function recursiveList($dir) {

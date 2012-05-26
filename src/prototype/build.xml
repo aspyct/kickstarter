@@ -1,9 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This is a Phing build file. More info at http://www.phing.info -->
-<project name="{{ project.name }}" default="phpunit">
+<project name="{{ project.name }}" default="dist">
+    <property file="build.properties" />
+    
     <target name="phpunit">
         <exec executable="phpunit">
-            <arg line="--bootstrap tests/bootstrap.php tests"/>
+            <arg line="--bootstrap ${testdir}/bootstrap.php ${testdir}" />
         </exec>
     </target>
+    <target name="prepare">
+        <mkdir dir="${builddir}" />
+        <mkdir dir="${distdir}" />
+    </target>
+    <target name="build" depends="prepare">
+        <copy todir="${builddir}">
+            <fileset refid="sources"/>
+        </copy>
+    </target>
+    <target name="dist" depends="build">
+        <zip destfile="${distdir}/${phing.project.name}.zip" basedir="${builddir}" />
+    </target>
+    
+    <target name="clean">
+        <delete dir="${builddir}" />
+        <delete dir="${distdir}" />
+    </target>
+    
+    <fileset dir="${srcdir}" id="sources">
+        <include name="**" />
+    </fileset>
 </project>

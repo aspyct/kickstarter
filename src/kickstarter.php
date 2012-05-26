@@ -32,6 +32,37 @@ DEFINE('VERSION', '0.1');
 
 Twig_Autoloader::register();
 
+/**
+ * Thanks to Composer for this function http://getcomposer.org
+ */
+function out($text, $color = null, $newLine = true)
+{
+    if (DIRECTORY_SEPARATOR == '\\') {
+        $hasColorSupport = false !== getenv('ANSICON');
+    } else {
+        $hasColorSupport = true;
+    }
+
+    $styles = array(
+        'success' => "\033[0;32m%s\033[0m",
+        'error' => "\033[31;31m%s\033[0m",
+        'info' => "\033[33;33m%s\033[0m"
+    );
+
+    $format = '%s';
+
+    if (isset($styles[$color]) && $hasColorSupport) {
+        $format = $styles[$color];
+    }
+
+    if ($newLine) {
+        $format .= PHP_EOL;
+    }
+
+    printf($format, $text);
+}
+
+
 // Define some classes and tasks...
 interface Command {
     function run(array $args);
@@ -62,17 +93,17 @@ class VersionCommand implements Command {
     }
 
     public function help(array $args) {
-        echo $this->getBrief()."\n";
+        out($this->getBrief());
     }
 
     public function run(array $args) {
-        echo $this->getBrief()."\n";
+        out($this->getBrief());
     }
 }
 
 class CreateProjectCommand implements Command {
     public function help(array $args=array()) {
-        printf("Syntax: %s <project name> <directory = .>\n", $this->getName());
+        out("Syntax: {$this->getName()} <project name> <directory = .>");
     }
 
     public function run(array $args) {
@@ -128,7 +159,7 @@ class CreateProjectCommand implements Command {
             
             // Run composer for the first time
             $origin = getcwd();
-            chdir($target);
+            chdir("$target/src");
             
             $this->runScript("curl http://getcomposer.org/installer | php");
             

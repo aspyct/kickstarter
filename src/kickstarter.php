@@ -120,6 +120,11 @@ class CreateProjectCommand implements Command {
             $project = new Project();
             $project->setName(array_shift($args));
             
+            /**
+             * Files to be ignored if they already exist 
+             */
+            $ignoreIfExists = array();
+            
             $target = empty($args) ? '.' : array_shift($args);
             if (is_dir($target)) {
                 out("Warning: target directory $target already exists.", 'info');
@@ -127,6 +132,9 @@ class CreateProjectCommand implements Command {
                 if (!confirm('Overwrite ?')) {
                     out("Exiting.", 'error');
                     return;
+                }
+                else if (!confirm('Overwrite .htaccess as well ?')) {
+                    $ignoreIfExists[] = 'src/.htaccess';
                 }
             }
             else {
@@ -143,6 +151,10 @@ class CreateProjectCommand implements Command {
             foreach ($this->recursiveList(PROTOTYPE_DIR) as $file) {
                 $source = PROTOTYPE_DIR.DIRECTORY_SEPARATOR.$file;
                 $dest = $target.DIRECTORY_SEPARATOR.$file;
+                
+                if (is_file($dest) && in_array($file, $ignoreIfExists)) {
+                    continue;
+                }
                 
                 if (in_array($file, $twiggable)) {
                     echo "Twig  $file\n";

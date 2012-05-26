@@ -27,6 +27,8 @@ catch (PharException $_) {
     require_once __DIR__.'/vendor/Twig/Autoloader.php';
 }
 
+DEFINE('VERSION', '0.1');
+
 
 Twig_Autoloader::register();
 
@@ -47,6 +49,24 @@ class Project {
 
     public function setName($name) {
         $this->name = $name;
+    }
+}
+
+class VersionCommand implements Command {
+    public function getBrief() {
+        return 'Version is ' . VERSION;
+    }
+
+    public function getName() {
+        return 'version';
+    }
+
+    public function help(array $args) {
+        echo $this->getBrief()."\n";
+    }
+
+    public function run(array $args) {
+        echo $this->getBrief()."\n";
     }
 }
 
@@ -261,6 +281,7 @@ class CommandGroupHelp implements Command {
 $cli = new CommandGroup();
 $cli->addSubCommand(new CreateProjectCommand());
 $cli->addSubCommand(new CommandGroupHelp($cli));
+$cli->addSubCommand(new VersionCommand());
 
 $cli->run($argv);
 

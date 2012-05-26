@@ -3,6 +3,9 @@
  * Configuration file for the development environment.
  * Here is the place to register services, controllers etc. into Silex.
  * This environment inherits from the prod environement.
+ * 
+ * If you are more than one working on this project, we highly encourage
+ * you to create a local_<yourname> environement that subclasses this dev.
  */
 
 use Silex\Application;

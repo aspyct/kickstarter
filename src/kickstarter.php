@@ -125,7 +125,7 @@ class CreateProjectCommand implements Command {
              */
             $ignoreIfExists = array();
             
-            $target = empty($args) ? '.' : array_shift($args);
+            $target = empty($args) ? $project->getName() : array_shift($args);
             if (is_dir($target)) {
                 out("Warning: target directory $target already exists.", 'info');
                 

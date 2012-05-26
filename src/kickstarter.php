@@ -62,6 +62,12 @@ function out($text, $color = null, $newLine = true)
     printf($format, $text);
 }
 
+function confirm($message, $color=null) {
+    out("$message (y/N) ", $color, false);
+    $fd = fopen('php://stdin', 'r');
+    $response = trim(fgets($fd));
+    return $response == 'y';
+}
 
 // Define some classes and tasks...
 interface Command {
@@ -116,12 +122,10 @@ class CreateProjectCommand implements Command {
             
             $target = empty($args) ? '.' : array_shift($args);
             if (is_dir($target)) {
-                echo "Warning: target directory $target already exists.\n";
-                echo "Override ? (y/n) ";
-                $fd = fopen('php://stdin', 'r');
-                $response = trim(fgets($fd));
-                if ($response != 'y') {
-                    echo "Exiting.\n";
+                out("Warning: target directory $target already exists.", 'info');
+                
+                if (!confirm('Overwrite ?')) {
+                    out("Exiting.", 'error');
                     return;
                 }
             }

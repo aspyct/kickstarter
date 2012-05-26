@@ -1,4 +1,4 @@
 [
     "build.xml",
-    "classes/Aspyct/Kickstarter/Controller/HomeControllerProvider.php"
+    "src/classes/Aspyct/Kickstarter/Controller/HomeControllerProvider.php"
 ]

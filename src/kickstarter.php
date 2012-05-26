@@ -157,19 +157,35 @@ class CreateProjectCommand implements Command {
                 }
                 
                 if (in_array($file, $twiggable)) {
-                    echo "Twig  $file\n";
                     $text = $twig->render($file, array(
                         'project' => $project
                     ));
-                    file_put_contents($dest, $text);
+                    
+                    if (file_put_contents($dest, $text) !== false) {
+                        out('+f ', 'success', false);
+                        out($file);
+                    }
+                    else {
+                        out("Could not create file $file", 'error');
+                    }
                 }
                 else if (is_file($source)) {
-                    echo "Copy  $file\n";
-                    copy($source, $dest);
+                    if (copy($source, $dest)) {
+                        out('+f ', 'success', false);
+                        out($file);
+                    }
+                    else {
+                        out("Could not create $file", 'error');
+                    }
                 }
                 else if (is_dir($source) && !is_dir($dest)) {
-                    echo "Mkdir $file\n";
-                    mkdir($dest, 0755, true);
+                    if (mkdir($dest, 0755, true)) {
+                        out('+d ', 'success', false);
+                        out($file);
+                    }
+                    else {
+                        out("Could not create directory $file", 'error');
+                    }
                 }
             }
             

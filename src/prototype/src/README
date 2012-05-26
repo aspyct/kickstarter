@@ -1,0 +1,30 @@
+If you can read this file, then you probably have successfully created
+you project, {{ project.name }}. Normally, this project should run smoothly on
+your web server. If it doesn't:
+
+    1. Check that the address in your browser is correct (you must hit the
+       www/ directory).
+    2. Check that the .htaccess file located in the src/ directory is correct
+    3. Get in touch: a.dotreppe@aspyct.org or @aspyct on twitter
+
+This freshly created project already has Silex and Twig installed. In addition
+to that, the latest version of Composer has been installed as well. It also
+comes with a basic phing configuration file.
+
+
+
+The src/ directory contains all the PHP files of the project. These are the ones
+that you will deploy to the server later.
+
+The tests/ directory contains the PHPUnit testcases. You can run them via phing
+`phing phpunit`, provided that phing and phpunit are properly installed on your
+system.
+
+
+Learn more:
+
+    - Silex: http://silex.sensiolabs.org/
+    - Twig: http://twig.sensiolabs.org/
+    - Composer: http://getcomposer.org/
+    - Phing: http://www.phing.info/
+    - PHPUnit: http://www.phpunit.de/manual/current/en/index.html

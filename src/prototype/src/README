@@ -1,6 +1,6 @@
 If you can read this file, then you probably have successfully created
-you project, {{ project.name }}. Normally, this project should run smoothly on
-your web server. If it doesn't:
+you project, {{ project.name }}, with kickstarter. Normally, this project should
+run smoothly on your web server. If it doesn't:
 
     1. Check that the address in your browser is correct (you must hit the
        www/ directory).
@@ -23,6 +23,7 @@ system.
 
 Learn more:
 
+    - Kickstarter: http://github.com/aspyct/kickstarter
     - Silex: http://silex.sensiolabs.org/
     - Twig: http://twig.sensiolabs.org/
     - Composer: http://getcomposer.org/

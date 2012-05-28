@@ -16,6 +16,8 @@
 use Aspyct\Kickstarter\Shell\Command;
 use Aspyct\Kickstarter\Shell\CreateProjectCommand;
 use Aspyct\Kickstarter\Shell\VersionCommand;
+use Aspyct\Kickstarter\Shell\CommandGroupHelp;
+use Aspyct\Kickstarter\Shell\CommandGroup;
 use Aspyct\Kickstarter\Model\Project;
 
 try {
@@ -81,103 +83,9 @@ function confirm($message, $color=null) {
 
 
 
-class CommandGroup implements Command {
-    /**
-     * @var array <Command>
-     */
-    private $subcommands;
-    
-    private $name = '<cli>';
-    
-    public function help(array $args=array()) {
-        if (empty($args)) {
-            $this->globalHelp();
-        }
-        else {
-            $this->specificHelp($args);
-        }
-    }
-    
-    private function globalHelp() {
-        echo "Available commands:\n";
-        
-        foreach ($this->subcommands as $command) {
-            printf("  %-14s%s\n", $command->getName(), $command->getBrief());
-        }
-    }
-    
-    private function specificHelp(array $args) {
-        $command = array_shift($args);
-        
-        if (array_key_exists($command, $this->subcommands)) {
-            $this->subcommands[$command]->help($args);
-        }
-        else {
-            echo "No such command: $command\n";
-            $this->globalHelp();
-        }
-    }
-    
-    public function run(array $args) {
-        // $args[0] is the program name
-        $this->name = array_shift($args);
-        
-        if (empty($args)) {
-            $this->help();
-        }
-        else {
-            $command = array_shift($args);
-            
-            if (array_key_exists($command, $this->subcommands)) {
-                $this->subcommands[$command]->run($args);
-            }
-            else {
-                echo "No such command: $command\n";
-                $this->help();
-            }
-        }
-    }
-    
-    public function getName() {
-        return $this->name;
-    }
-    
-    public function getBrief() {
-        return 'The main CLI of this software.';
-    }
-    
-    public function addSubCommand(Command $subcommand) {
-        $this->subcommands[$subcommand->getName()] = $subcommand;
-    }
-}
 
 
-class CommandGroupHelp implements Command {
-    /**
-     * @var CommandGroup
-     */
-    private $commandGroup;
-    
-    public function __construct(CommandGroup $commandGroup) {
-        $this->commandGroup = $commandGroup;
-    }
-    
-    public function getBrief() {
-        return 'Need help about help ?';
-    }
-    
-    public function getName() {
-        return 'help';
-    }
-    
-    public function help(array $args) {
-        echo "Meta help rocks !\n";
-    }
-    
-    public function run(array $args) {
-        $this->commandGroup->help($args);
-    }
-}
+
 
 // Set up the software
 $cli = new CommandGroup();

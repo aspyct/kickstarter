@@ -170,11 +170,11 @@ class CreateProjectCommand implements Command {
                 $source = PROTOTYPE_DIR.DIRECTORY_SEPARATOR.$file;
                 $dest = $target.DIRECTORY_SEPARATOR.$file;
                 
-                if (is_file($dest) && in_array($file, $ignoreIfExists)) {
+                if (is_file($dest) && in_array($file, $this->ignoreIfExists)) {
                     continue;
                 }
                 
-                if (in_array($file, $twiggable)) {
+                if (in_array($file, $this->twiggable)) {
                     $text = $this->twig->render($file, array(
                         'project' => $project
                     ));

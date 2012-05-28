@@ -24,17 +24,22 @@ use Aspyct\Kickstarter\Shell\Dialog;
 try {
     Phar::mapPhar();
     
+    function path_to($fileInProject) {
+        return sprintf('phar://%s/%s', __FILE__, $fileInProject);
+    }
     // Running from Phar
-    define('PROTOTYPE_DIR', 'phar://' . __FILE__ . '/prototype');
-    define('RES_DIR', 'phar://' . __FILE__ . '/res');
-    require_once 'phar://' . __FILE__ . '/vendor/Twig/Autoloader.php';
 }
 catch (PharException $_) {
-    define('PROTOTYPE_DIR', __DIR__.'/prototype');
-    define('RES_DIR', __DIR__.'/res');
-    require_once __DIR__.'/vendor/Twig/Autoloader.php';
-    require_once __DIR__.'/classes/autoload.php';
+    function path_to($fileInProject) {
+        return sprintf('%s/%s', __DIR__, $fileInProject);
+    }
 }
+
+
+define('PROTOTYPE_DIR', path_to('prototype'));
+define('RES_DIR', path_to('res'));
+require_once path_to('vendor/Twig/Autoloader.php');
+require_once path_to('classes/autoload.php');
 
 DEFINE('VERSION', '0.1');
 

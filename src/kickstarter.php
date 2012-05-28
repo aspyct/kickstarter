@@ -251,6 +251,7 @@ class CreateProjectCommand implements Command {
         }
         else {
             mkdir($target, 0755, true);
+            return true;
         }
     }
     

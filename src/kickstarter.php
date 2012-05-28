@@ -108,6 +108,40 @@ class VersionCommand implements Command {
 }
 
 class CreateProjectCommand implements Command {
+    /**
+     *
+     * @var Twig_Environment
+     */
+    private $twig;
+    
+    /**
+     *
+     * @var array of files that must be passed through twig
+     */
+    private $twiggable;
+    
+    /**
+     *
+     * @var array of files to be ignored if they already exist in the target dir
+     */
+    private $ignoreIfExists;
+    
+    /**
+     *
+     * @var string target installation directory
+     */
+    private $target;
+    
+    public function __construct() {
+        $twigLoader = new Twig_Loader_Filesystem(PROTOTYPE_DIR);
+        $this->twig = new Twig_Environment($twigLoader);
+        
+        $rawTwiggable = file_get_contents(RES_DIR.'/twiggable.json');
+        $this->twiggable = json_decode($rawTwiggable);
+        
+        $this->ignoreIfExists;
+    }
+    
     public function help(array $args=array()) {
         out("Syntax: {$this->getName()} <project name> <directory = .>");
     }
@@ -120,31 +154,15 @@ class CreateProjectCommand implements Command {
             $project = new Project();
             $project->setName(array_shift($args));
             
-            /**
-             * Files to be ignored if they already exist 
-             */
-            $ignoreIfExists = array();
-            
+            // TODO Get the target from the options (-d --directory)
             $target = empty($args) ? $project->getName() : array_shift($args);
-            if (is_dir($target)) {
-                out("Warning: target directory $target already exists.", 'info');
-                
-                if (!confirm('Overwrite ?')) {
-                    out("Exiting.", 'error');
-                    return;
-                }
-                else if (!confirm('Overwrite .htaccess as well ?')) {
-                    $ignoreIfExists[] = 'src/.htaccess';
-                }
-            }
-            else {
-                mkdir($target, 0755, true);
+            if (!$this->confirmTarget($target)) {
+                out("Exiting.", 'error');
+                return;
             }
             
-            $twiggable = json_decode(file_get_contents(RES_DIR.'/twiggable.json'));
             
-            $twigLoader = new Twig_Loader_Filesystem(PROTOTYPE_DIR);
-            $twig = new Twig_Environment($twigLoader);
+            
             
             
             // Copy files and create directories
@@ -157,7 +175,7 @@ class CreateProjectCommand implements Command {
                 }
                 
                 if (in_array($file, $twiggable)) {
-                    $text = $twig->render($file, array(
+                    $text = $this->twig->render($file, array(
                         'project' => $project
                     ));
                     
@@ -204,6 +222,35 @@ class CreateProjectCommand implements Command {
             $this->runScript("./composer.phar install");
             
             chdir($origin);
+        }
+    }
+    
+    /**
+     *
+     * @param string $path 
+     * @post the target directory has been created if necessary
+     * @post some files have been added to the ignore list if necessary
+     * @return true if the target is confirmed, false to abort
+     */
+    private function confirmTarget($target) {
+        if (is_dir($target)) {
+            out("Warning: target directory $target already exists.", 'info');
+
+            if (confirm('Overwrite ?')) {
+                
+                // Keep the .htaccess file ?
+                if (!confirm('Overwrite .htaccess as well ?')) {
+                    $this->ignoreIfExists[] = 'src/.htaccess';
+                }
+                
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            mkdir($target, 0755, true);
         }
     }
     

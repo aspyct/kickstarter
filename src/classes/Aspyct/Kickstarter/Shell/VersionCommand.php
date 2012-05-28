@@ -1,7 +1,7 @@
 <?php
 namespace Aspyct\Kickstarter\Shell;
 
-class VersionCommand implements Command {
+class VersionCommand extends AbstractCommand {
     public function getBrief() {
         return 'Version is ' . VERSION;
     }
@@ -11,10 +11,10 @@ class VersionCommand implements Command {
     }
 
     public function help(array $args) {
-        out($this->getBrief());
+        $this->out($this->getBrief());
     }
 
     public function run(array $args) {
-        out($this->getBrief());
+        $this->out($this->getBrief());
     }
 }

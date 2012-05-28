@@ -1,13 +1,14 @@
 <?php
 namespace Aspyct\Kickstarter\Shell;
 
-class CommandGroupHelp implements Command {
+class CommandGroupHelp extends AbstractCommand {
     /**
      * @var CommandGroup
      */
     private $commandGroup;
     
-    public function __construct(CommandGroup $commandGroup) {
+    public function __construct(Dialog $dialog, CommandGroup $commandGroup) {
+        parent::__construct($dialog);
         $this->commandGroup = $commandGroup;
     }
     

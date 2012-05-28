@@ -1,7 +1,9 @@
 <?php
 namespace Aspyct\Kickstarter\Shell;
 
-class CreateProjectCommand implements Command {
+use Aspyct\Kickstarter\Model\Project;
+
+class CreateProjectCommand extends AbstractCommand {
     /**
      *
      * @var \Twig_Environment
@@ -26,7 +28,8 @@ class CreateProjectCommand implements Command {
      */
     private $target;
     
-    public function __construct() {
+    public function __construct(Dialog $dialog) {
+        parent::__construct($dialog);
         $twigLoader = new \Twig_Loader_Filesystem(PROTOTYPE_DIR);
         $this->twig = new \Twig_Environment($twigLoader);
         
@@ -37,7 +40,7 @@ class CreateProjectCommand implements Command {
     }
     
     public function help(array $args=array()) {
-        out("Syntax: {$this->getName()} <project name> <directory = .>");
+        $this->out("Syntax: {$this->getName()} <project name> <directory = .>");
     }
 
     public function run(array $args) {
@@ -51,7 +54,7 @@ class CreateProjectCommand implements Command {
             // TODO Get the target from the options (-d --directory)
             $target = empty($args) ? $project->getName() : array_shift($args);
             if (!$this->confirmTarget($target)) {
-                out("Exiting.", 'error');
+                $this->out("Exiting.", 'error');
                 return;
             }
             
@@ -74,29 +77,29 @@ class CreateProjectCommand implements Command {
                     ));
                     
                     if (file_put_contents($dest, $text) !== false) {
-                        out('+f ', 'success', false);
-                        out($file);
+                        $this->out('+f ', 'success', false);
+                        $this->out($file);
                     }
                     else {
-                        out("Could not create file $file", 'error');
+                        $this->out("Could not create file $file", 'error');
                     }
                 }
                 else if (is_file($source)) {
                     if (copy($source, $dest)) {
-                        out('+f ', 'success', false);
-                        out($file);
+                        $this->out('+f ', 'success', false);
+                        $this->out($file);
                     }
                     else {
-                        out("Could not create $file", 'error');
+                        $this->out("Could not create $file", 'error');
                     }
                 }
                 else if (is_dir($source) && !is_dir($dest)) {
                     if (mkdir($dest, 0755, true)) {
-                        out('+d ', 'success', false);
-                        out($file);
+                        $this->out('+d ', 'success', false);
+                        $this->out($file);
                     }
                     else {
-                        out("Could not create directory $file", 'error');
+                        $this->out("Could not create directory $file", 'error');
                     }
                 }
             }
@@ -128,12 +131,12 @@ class CreateProjectCommand implements Command {
      */
     private function confirmTarget($target) {
         if (is_dir($target)) {
-            out("Warning: target directory $target already exists.", 'info');
+            $this->out("Warning: target directory $target already exists.", 'info');
 
-            if (confirm('Overwrite ?')) {
+            if ($this->confirm('Overwrite ?')) {
                 
                 // Keep the .htaccess file ?
-                if (!confirm('Overwrite .htaccess as well ?')) {
+                if (!$this->confirm('Overwrite .htaccess as well ?')) {
                     $this->ignoreIfExists[] = 'src/.htaccess';
                 }
                 
@@ -157,7 +160,7 @@ class CreateProjectCommand implements Command {
     private function recursiveList($dir) {
         $entries = array();
         
-        $it = new DirectoryIterator($dir);
+        $it = new \DirectoryIterator($dir);
         foreach ($it as $entry) {
             if ($entry->isFile()) {
                 $entries[] = $entry->getFilename();

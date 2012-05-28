@@ -1,7 +1,7 @@
 <?php
 namespace Aspyct\Kickstarter\Shell;
 
-class CommandGroup implements Command {
+class CommandGroup extends AbstractCommand {
     /**
      * @var array <Command>
      */
